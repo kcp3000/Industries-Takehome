@@ -268,6 +268,48 @@ select {
   margin-bottom: 16px;
 }
 
+.pagination-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 16px;
+  padding: 14px 16px;
+  border-radius: 18px;
+  border: 1px solid var(--border);
+  background: var(--panel-strong);
+}
+
+.pagination-copy {
+  display: grid;
+  gap: 2px;
+}
+
+.pagination-copy span,
+.pagination-page {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.pagination-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.pagination-button {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 8px 14px;
+  background: rgba(255, 255, 255, 0.7);
+  cursor: pointer;
+}
+
+.pagination-button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
 .summary-card {
   padding: 14px 16px;
   background: var(--panel-strong);
@@ -472,5 +514,10 @@ select {
   .summary-row,
   .field-row {
     grid-template-columns: 1fr;
+  }
+
+  .pagination-bar,
+  .pagination-actions {
+    display: grid;
   }
 }

@@ -2,7 +2,10 @@ import { formatDayLabel, formatGeneratedAt } from "../lib/date";
 import { getCellTone, getDaySummary } from "../lib/availability";
 import type { AvailabilityResult } from "../types";
 
+const PAGE_JUMP = 5;
+
 type AvailabilityBoardProps = {
+  currentPage: number;
   dateColumns: string[];
   error: string | null;
   loading: boolean;
@@ -13,18 +16,30 @@ type AvailabilityBoardProps = {
     openCells: number;
     fillRate: number;
   };
+  totalPages: number;
+  totalVisibleFields: number;
   onSelectField: (fieldId: string) => void;
+  onPageChange: (page: number) => void;
 };
 
 export function AvailabilityBoard({
+  currentPage,
   dateColumns,
   error,
   loading,
   result,
   selectedFieldId,
   summary,
+  totalPages,
+  totalVisibleFields,
   onSelectField,
+  onPageChange,
 }: AvailabilityBoardProps) {
+  const pageStart = summary.totalFields === 0 ? 0 : (currentPage - 1) * 5 + 1;
+  const pageEnd = summary.totalFields === 0 ? 0 : pageStart + totalVisibleFields - 1;
+  const previousJumpPage = Math.max(1, currentPage - PAGE_JUMP);
+  const nextJumpPage = Math.min(totalPages, currentPage + PAGE_JUMP);
+
   return (
     <section className="panel board-panel">
       <div className="panel-heading board-heading">
@@ -59,6 +74,50 @@ export function AvailabilityBoard({
           <span>Availability rate</span>
           <strong>{summary.fillRate}%</strong>
         </article>
+      </div>
+
+      <div className="pagination-bar">
+        <div className="pagination-copy">
+          <strong>Showing {pageStart}-{pageEnd}</strong>
+          <span>of {summary.totalFields} total fields</span>
+        </div>
+        <div className="pagination-actions">
+          <button
+            className="pagination-button"
+            disabled={currentPage <= 1}
+            onClick={() => onPageChange(previousJumpPage)}
+            type="button"
+          >
+            -5 Pages
+          </button>
+          <button
+            className="pagination-button"
+            disabled={currentPage <= 1}
+            onClick={() => onPageChange(currentPage - 1)}
+            type="button"
+          >
+            Previous
+          </button>
+          <span className="pagination-page">
+            Page {currentPage} / {totalPages}
+          </span>
+          <button
+            className="pagination-button"
+            disabled={currentPage >= totalPages}
+            onClick={() => onPageChange(currentPage + 1)}
+            type="button"
+          >
+            Next
+          </button>
+          <button
+            className="pagination-button"
+            disabled={currentPage >= totalPages}
+            onClick={() => onPageChange(nextJumpPage)}
+            type="button"
+          >
+            +5 Pages
+          </button>
+        </div>
       </div>
 
       {error ? <div className="error-banner">{error}</div> : null}
