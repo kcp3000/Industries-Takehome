@@ -26,7 +26,7 @@ async function getFacilityCatalog() {
   if (!facilityCatalogPromise) {
     facilityCatalogPromise = fetch("/athleticFacilities.json").then(async (response) => {
       if (!response.ok) {
-        throw new Error("Failed to load the NYC athletic facilities catalog.");
+        throw new Error("Failed to load the NYC athletic facilities dataset.");
       }
       return (await response.json()) as FacilitySeed[];
     });
@@ -144,9 +144,9 @@ export async function loadInventorySeedAvailability(
   return {
     fields,
     generatedAt: new Date().toISOString(),
-    sourceLabel: "NYC Open Data athletic facilities inventory",
+    sourceLabel: "NYC Open Data athletic facilities dataset",
     disclaimer:
-      "Facility inventory is sourced from NYC Open Data Athletic Facilities (dataset qnem-b8re). Availability slots are still simulated because bulk permit availability is not exposed as a ready-made calendar feed here.",
+      "Facility inventory is loaded from a local dataset snapshot derived from the NYC Open Data Athletic Facilities dataset (qnem-b8re). Availability slots are still simulated because the public dataset does not expose a ready-made permit calendar.",
   };
 }
 

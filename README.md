@@ -20,12 +20,12 @@ The current build is intentionally optimized for product judgment and clarity:
 
 ## Current status
 
-This build now uses the real NYC Open Data Athletic Facilities inventory as its facility catalog, then layers simulated availability on top so the interface can be exercised at realistic scale.
+This build now uses a local dataset snapshot derived from the NYC Open Data Athletic Facilities dataset as its facility catalog source, then layers simulated availability on top so the interface can be exercised at realistic scale.
 
 What is real now:
 
 - React + TypeScript application structure
-- Real NYC athletic-facility inventory seeded from the public dataset
+- Real NYC athletic-facility inventory loaded from a local dataset snapshot
 - Search controls and date-range handling
 - Unified calendar UX
 - Field detail panel
@@ -42,11 +42,15 @@ That gap is intentional and called out because the prompt explicitly asks for ho
 
 ## Dataset used
 
-The facility inventory is seeded from the NYC Open Data Athletic Facilities dataset:
+The facility inventory is sourced from the NYC Open Data Athletic Facilities dataset:
 
 - Landing page: https://data.cityofnewyork.us/dataset/Athletic-Facilities/qpgi-ckmp
+- API docs: https://dev.socrata.com/foundry/data.cityofnewyork.us/qnem-b8re
 - Current dataset/API id: `qnem-b8re`
-- Download used in this repo: `data/athletic-facilities.csv`
+- CSV snapshot kept in this repo: `data/athletic-facilities.csv`
+- Runtime dataset used by the app: `public/athleticFacilities.json`
+
+The app now reads the generated JSON dataset locally at runtime rather than calling the public API directly.
 
 The version I pulled during development represented roughly:
 
@@ -87,7 +91,7 @@ The app is deliberately split into three layers:
    A real-inventory adapter that reads the NYC athletic-facilities seed data and generates deterministic availability across the requested date range.
 
 4. `public/athleticFacilities.json`
-   Trimmed facility inventory derived from the raw NYC CSV and loaded at runtime so it does not bloat the main JS bundle.
+   Trimmed facility inventory derived from the raw NYC CSV and loaded at runtime so the app has a stable dataset source.
 
 ## How I would wire the live NYC Parks source next
 
@@ -99,9 +103,15 @@ The public NYC Parks map already exposes field availability on the public web, b
    - permit blocks
    - open / booked / closed slot summaries
 3. Cache normalized responses by park + day range.
-4. Keep the React board exactly as-is and swap the inventory-seeded provider for the live provider.
+4. Keep the React board exactly as-is and swap the dataset-backed provider for the live provider.
 
 If I were shipping this for a real client, I would prefer a thin server-side proxy with caching rather than direct browser scraping. That would make rate-limiting, retries, source changes, and observability much safer.
+
+## Dataset access
+
+The app currently reads a local generated dataset instead of calling the Socrata API on every load.
+
+That keeps the demo more stable, avoids browser-side rate-limit surprises, and makes the repo easier to review because the facility inventory is deterministic during development.
 
 ## Tradeoffs
 
