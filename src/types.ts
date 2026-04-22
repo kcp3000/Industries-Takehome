@@ -46,7 +46,7 @@ export type AvailabilityQuery = {
   startDate: string;
   endDate: string;
   borough: string;
-  search: string;
+  fieldType: string;
   mode: DataSourceMode;
 };
 
