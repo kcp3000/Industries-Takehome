@@ -1,12 +1,11 @@
 import { useEffect, useState } from "react";
 import { getFacilityCatalog } from "../data/sampleData";
-import { SPORT_OPTIONS, type AvailabilityQuery, type DataSourceMode } from "../types";
+import { SPORT_OPTIONS, type AvailabilityQuery } from "../types";
 
 const BOROUGH_OPTIONS = ["All", "Bronx", "Brooklyn", "Manhattan", "Queens", "Staten Island"] as const;
 
 type SearchControlsProps = {
   query: AvailabilityQuery;
-  onModeChange: (mode: DataSourceMode) => void;
   onQueryChange: <K extends keyof AvailabilityQuery>(
     key: K,
     value: AvailabilityQuery[K],
@@ -15,7 +14,6 @@ type SearchControlsProps = {
 
 export function SearchControls({
   query,
-  onModeChange,
   onQueryChange,
 }: SearchControlsProps) {
   const [fieldTypeOptions, setFieldTypeOptions] = useState<string[]>([]);
@@ -65,23 +63,6 @@ export function SearchControls({
       <div className="panel-heading">
         <h2>Search</h2>
         <p>Filter by sport, date range, and borough.</p>
-      </div>
-
-      <div className="mode-toggle">
-        <button
-          className={query.mode === "inventory" ? "mode-button active" : "mode-button"}
-          onClick={() => onModeChange("inventory")}
-          type="button"
-        >
-          NYC inventory
-        </button>
-        <button
-          className={query.mode === "live" ? "mode-button active" : "mode-button"}
-          onClick={() => onModeChange("live")}
-          type="button"
-        >
-          Live adapter
-        </button>
       </div>
 
       <label className="field">
