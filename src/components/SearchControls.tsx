@@ -1,3 +1,5 @@
+import { useEffect, useState } from "react";
+import { getFacilityCatalog } from "../data/sampleData";
 import { SPORT_OPTIONS, type AvailabilityQuery, type DataSourceMode } from "../types";
 
 const BOROUGH_OPTIONS = ["All", "Bronx", "Brooklyn", "Manhattan", "Queens", "Staten Island"] as const;
@@ -16,6 +18,48 @@ export function SearchControls({
   onModeChange,
   onQueryChange,
 }: SearchControlsProps) {
+  const [fieldTypeOptions, setFieldTypeOptions] = useState<string[]>([]);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function loadFieldOptions() {
+      try {
+        const facilityCatalog = await getFacilityCatalog();
+        if (cancelled) {
+          return;
+        }
+
+        const nextOptions = Array.from(
+          new Set(
+            facilityCatalog
+              .filter((facility) => facility.sports.includes(query.sport))
+              .filter((facility) => query.borough === "All" || facility.borough === query.borough)
+              .map((facility) => facility.surface),
+          ),
+        ).sort((left, right) => left.localeCompare(right));
+
+        setFieldTypeOptions(nextOptions);
+      } catch {
+        if (!cancelled) {
+          setFieldTypeOptions([]);
+        }
+      }
+    }
+
+    void loadFieldOptions();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [query.borough, query.sport]);
+
+  useEffect(() => {
+    if (query.fieldType && !fieldTypeOptions.includes(query.fieldType)) {
+      onQueryChange("fieldType", "");
+    }
+  }, [fieldTypeOptions, onQueryChange, query.fieldType]);
+
   return (
     <section className="panel controls-panel">
       <div className="panel-heading">
@@ -78,6 +122,21 @@ export function SearchControls({
       </div>
 
       <label className="field">
+        <span>Field type</span>
+        <select
+          value={query.fieldType}
+          onChange={(event) => onQueryChange("fieldType", event.target.value)}
+        >
+          <option value="">All field types</option>
+          {fieldTypeOptions.map((fieldType) => (
+            <option key={fieldType} value={fieldType}>
+              {fieldType}
+            </option>
+          ))}
+        </select>
+      </label>
+
+      <label className="field">
         <span>Borough</span>
         <select
           value={query.borough}
@@ -89,16 +148,6 @@ export function SearchControls({
             </option>
           ))}
         </select>
-      </label>
-
-      <label className="field">
-        <span>Search park or field name</span>
-        <input
-          type="text"
-          placeholder="Astoria, Randall's, North Meadow..."
-          value={query.search}
-          onChange={(event) => onQueryChange("search", event.target.value)}
-        />
       </label>
 
       <div className="note-card">

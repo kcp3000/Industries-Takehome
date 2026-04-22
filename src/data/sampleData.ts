@@ -22,7 +22,7 @@ type FacilitySeed = {
 
 let facilityCatalogPromise: Promise<FacilitySeed[]> | null = null;
 
-async function getFacilityCatalog() {
+export async function getFacilityCatalog() {
   if (!facilityCatalogPromise) {
     facilityCatalogPromise = fetch("/athleticFacilities.json").then(async (response) => {
       if (!response.ok) {
@@ -96,7 +96,7 @@ export async function loadInventorySeedAvailability(
 ): Promise<AvailabilityResult> {
   const fieldCatalog = await getFacilityCatalog();
   const dates = getDateRange(query.startDate, query.endDate);
-  const normalizedSearch = query.search.trim().toLowerCase();
+  const normalizedFieldType = query.fieldType.trim().toLowerCase();
 
   const fields = fieldCatalog.filter((facility) => {
     if (!facility.sports.includes(query.sport)) {
@@ -105,11 +105,10 @@ export async function loadInventorySeedAvailability(
     if (query.borough !== "All" && facility.borough !== query.borough) {
       return false;
     }
-    if (!normalizedSearch) {
-      return true;
+    if (normalizedFieldType && facility.surface.toLowerCase() !== normalizedFieldType) {
+      return false;
     }
-    const haystack = `${facility.name} ${facility.park} ${facility.locationHint}`.toLowerCase();
-    return haystack.includes(normalizedSearch);
+    return true;
   })
     .sort((left, right) => {
       return (
@@ -155,6 +154,6 @@ export const DEFAULT_QUERY: AvailabilityQuery = {
   startDate: todayIso(),
   endDate: addDays(todayIso(), 6),
   borough: "All",
-  search: "",
+  fieldType: "",
   mode: "inventory",
 };
