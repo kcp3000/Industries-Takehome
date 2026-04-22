@@ -1,15 +1,18 @@
-import type { DataSourceMode } from "../types";
-
-type HeroProps = {
-  mode: DataSourceMode;
-};
-
-export function Hero({ mode }: HeroProps) {
+export function Hero() {
   return (
     <header className="hero">
       <div className="hero-copy">
-        <p className="eyebrow">M-Flat case study / React + TypeScript</p>
-        <h1>Field Availability Console</h1>
+        <div className="hero-brand">
+          <img
+            className="hero-logo"
+            src="/nyc-parks-logo.svg"
+            alt="NYC Parks logo"
+          />
+          <div>
+            <p className="eyebrow">M-Flat case study / React + TypeScript</p>
+            <h1>Field Availability Console</h1>
+          </div>
+        </div>
         <p className="hero-text">
           Compare every field of a chosen type across a date range in one
           screen, instead of clicking pin by pin through a map.
@@ -17,7 +20,7 @@ export function Hero({ mode }: HeroProps) {
       </div>
 
       <div className="hero-card">
-        <span className="pill">{mode === "inventory" ? "NYC inventory mode" : "Live mode"}</span>
+        <span className="pill">NYC inventory</span>
         <strong>Designed for Monday-morning staff use</strong>
         <p>
           Fast scan, obvious status colors, and a details panel that keeps

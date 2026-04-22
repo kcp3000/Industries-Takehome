@@ -155,5 +155,4 @@ export const DEFAULT_QUERY: AvailabilityQuery = {
   endDate: addDays(todayIso(), 6),
   borough: "All",
   fieldType: "",
-  mode: "inventory",
 };

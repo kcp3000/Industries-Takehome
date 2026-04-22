@@ -8,8 +8,6 @@ export const SPORT_OPTIONS = [
 
 export type Sport = (typeof SPORT_OPTIONS)[number];
 
-export type DataSourceMode = "inventory" | "live";
-
 export type Field = {
   id: string;
   name: string;
@@ -47,7 +45,6 @@ export type AvailabilityQuery = {
   endDate: string;
   borough: string;
   fieldType: string;
-  mode: DataSourceMode;
 };
 
 export type AvailabilityResult = {

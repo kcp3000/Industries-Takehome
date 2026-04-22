@@ -7,7 +7,7 @@ import { DEFAULT_QUERY } from "./data/sampleData";
 import { useAvailabilitySearch } from "./hooks/useAvailabilitySearch";
 import { getDateRange } from "./lib/date";
 import { summarizeAvailability } from "./lib/availability";
-import type { AvailabilityQuery, DataSourceMode } from "./types";
+import type { AvailabilityQuery } from "./types";
 
 const FIELDS_PER_PAGE = 5;
 
@@ -72,18 +72,13 @@ function App() {
     });
   }
 
-  function setMode(mode: DataSourceMode) {
-    setQuery((current) => ({ ...current, mode }));
-  }
-
   return (
     <div className="page-shell">
-      <Hero mode={query.mode} />
+      <Hero />
 
       <main className="content-grid">
         <SearchControls
           query={query}
-          onModeChange={setMode}
           onQueryChange={updateQuery}
         />
         <AvailabilityBoard
