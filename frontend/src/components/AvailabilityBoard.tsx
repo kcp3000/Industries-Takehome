@@ -1,8 +1,10 @@
+import type { CSSProperties } from "react";
 import { formatDayLabel, formatGeneratedAt } from "../lib/date";
 import { getBookedHours, getCellTone, getDaySummary } from "../lib/availability";
 import type { AvailabilityResult } from "../types";
 
 const PAGE_JUMP = 5;
+const SKELETON_ROW_COUNT = 5;
 
 type AvailabilityBoardProps = {
   currentPage: number;
@@ -39,6 +41,7 @@ export function AvailabilityBoard({
   const pageEnd = summary.totalFields === 0 ? 0 : pageStart + totalVisibleFields - 1;
   const previousJumpPage = Math.max(1, currentPage - PAGE_JUMP);
   const nextJumpPage = Math.min(totalPages, currentPage + PAGE_JUMP);
+  const showLoadingSkeleton = loading;
 
   return (
     <section className="panel board-panel">
@@ -122,7 +125,40 @@ export function AvailabilityBoard({
 
       {error ? <div className="error-banner">{error}</div> : null}
 
-      {result ? (
+      {showLoadingSkeleton ? (
+        <div className="matrix-wrapper">
+          <div
+            className="availability-skeleton"
+            aria-hidden="true"
+            style={{ "--skeleton-days": dateColumns.length } as CSSProperties}
+          >
+            <div className="availability-skeleton-header">
+              <div className="skeleton-block skeleton-field-label" />
+              {dateColumns.map((date) => (
+                <div key={date} className="skeleton-block skeleton-day-label" />
+              ))}
+            </div>
+            <div className="availability-skeleton-body">
+              {Array.from({ length: SKELETON_ROW_COUNT }, (_, rowIndex) => (
+                <div key={rowIndex} className="availability-skeleton-row">
+                  <div className="field-meta skeleton-panel">
+                    <div className="skeleton-block skeleton-field-title" />
+                    <div className="skeleton-block skeleton-field-copy" />
+                    <div className="skeleton-block skeleton-field-copy" />
+                    <div className="skeleton-block skeleton-field-copy skeleton-field-copy-short" />
+                  </div>
+                  {dateColumns.map((date) => (
+                    <div key={`${rowIndex}-${date}`} className="cell skeleton-panel">
+                      <div className="skeleton-block skeleton-cell-value" />
+                      <div className="skeleton-block skeleton-cell-copy" />
+                    </div>
+                  ))}
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      ) : result ? (
         <>
           <div className="source-banner">
             <strong>{result.sourceLabel}</strong>

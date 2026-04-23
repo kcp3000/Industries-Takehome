@@ -399,6 +399,96 @@ input:focus-visible {
   overflow-x: auto;
 }
 
+.availability-skeleton {
+  min-width: 760px;
+}
+
+.availability-skeleton-header,
+.availability-skeleton-row {
+  display: grid;
+  grid-template-columns: 230px repeat(var(--skeleton-days, 7), minmax(124px, 1fr));
+  gap: 10px;
+}
+
+.availability-skeleton-header {
+  margin-bottom: 16px;
+  padding: 0 10px;
+}
+
+.availability-skeleton-body {
+  display: grid;
+  gap: 10px;
+}
+
+.skeleton-panel {
+  position: relative;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.72);
+}
+
+.skeleton-panel::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.55),
+    transparent
+  );
+  animation: skeleton-sheen 1.2s ease-in-out infinite;
+}
+
+.skeleton-block {
+  border-radius: 999px;
+  background: rgba(16, 42, 45, 0.1);
+}
+
+.skeleton-field-label,
+.skeleton-day-label {
+  height: 14px;
+  margin: 0 10px 4px 0;
+}
+
+.skeleton-field-label {
+  width: 72px;
+}
+
+.skeleton-day-label {
+  width: 88px;
+}
+
+.skeleton-field-title {
+  width: 56%;
+  height: 18px;
+}
+
+.skeleton-field-copy {
+  width: 74%;
+  height: 11px;
+}
+
+.skeleton-field-copy-short {
+  width: 48%;
+}
+
+.skeleton-cell-value {
+  width: 44%;
+  height: 22px;
+}
+
+.skeleton-cell-copy {
+  width: 70%;
+  height: 11px;
+}
+
+@keyframes skeleton-sheen {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
 .availability-table {
   width: 100%;
   border-collapse: separate;
@@ -416,7 +506,7 @@ input:focus-visible {
 }
 
 .availability-table td {
-  padding: 0 10px;
+  padding: 5px 10px;
   vertical-align: top;
 }
 
@@ -433,7 +523,7 @@ input:focus-visible {
 
 .field-meta {
   min-width: 230px;
-  padding: 14px;
+  padding: 16px 18px;
   border-radius: 18px;
   background: rgba(255, 255, 255, 0.75);
   border: 1px solid var(--border);
@@ -543,27 +633,37 @@ input:focus-visible {
 .slot-item {
   display: flex;
   justify-content: space-between;
+  align-items: center;
   gap: 12px;
   padding: 10px 12px;
   border-radius: 14px;
   background: rgba(255, 255, 255, 0.72);
 }
 
-.slot-tag {
-  padding: 4px 10px;
+.status-pill {
+  width: 6rem;
+  min-height: 1.6rem;
+  padding: 0.18rem 0.625rem;
   border-radius: 999px;
-  font-size: 0.82rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-size: 0.67rem;
+  line-height: 1;
+  flex-shrink: 0;
+  font-weight: 600;
 }
 
-.slot-available {
+.status-pill-available {
   background: var(--open);
 }
 
-.slot-booked {
+.status-pill-booked {
   background: var(--booked);
 }
 
-.slot-closed {
+.status-pill-closed {
   background: var(--closed);
 }
 

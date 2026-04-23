@@ -37,10 +37,17 @@ export function formatTimeInNewYork(value) {
   return timeFormatter.format(value);
 }
 
+function formatLocalDateIso(date) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
 export function addDays(dateIso, days) {
   const date = new Date(`${dateIso}T12:00:00`);
   date.setDate(date.getDate() + days);
-  return date.toISOString().slice(0, 10);
+  return formatLocalDateIso(date);
 }
 
 export function getDateRange(startIso, endIso) {
@@ -49,7 +56,7 @@ export function getDateRange(startIso, endIso) {
   const end = new Date(`${endIso}T12:00:00`);
 
   for (let current = start; current <= end; current = new Date(current.getTime() + 86400000)) {
-    range.push(current.toISOString().slice(0, 10));
+    range.push(formatLocalDateIso(current));
   }
 
   return range;

@@ -26,6 +26,8 @@ export type Field = {
 export type TimeSlot = {
   start: string;
   end: string;
+  startAt?: string;
+  endAt?: string;
   status: "available" | "booked" | "closed";
   label: string;
   hidden?: boolean;

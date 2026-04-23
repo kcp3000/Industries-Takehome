@@ -1,13 +1,20 @@
 export const MS_PER_DAY = 24 * 60 * 60 * 1000;
 
+function formatLocalDateIso(date: Date) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
 export function todayIso() {
-  return new Date().toISOString().slice(0, 10);
+  return formatLocalDateIso(new Date());
 }
 
 export function addDays(dateIso: string, days: number) {
   const date = new Date(`${dateIso}T12:00:00`);
   date.setDate(date.getDate() + days);
-  return date.toISOString().slice(0, 10);
+  return formatLocalDateIso(date);
 }
 
 export function getDateRange(startIso: string, endIso: string) {
@@ -20,7 +27,7 @@ export function getDateRange(startIso: string, endIso: string) {
   }
 
   for (let current = start; current <= end; current = new Date(current.getTime() + MS_PER_DAY)) {
-    range.push(current.toISOString().slice(0, 10));
+    range.push(formatLocalDateIso(current));
   }
 
   return range;
@@ -38,5 +45,31 @@ export function formatGeneratedAt(dateIso: string) {
   return new Date(dateIso).toLocaleString(undefined, {
     dateStyle: "medium",
     timeStyle: "short",
+  });
+}
+
+export function formatSlotTime(timeIso: string | undefined, fallbackTime: string) {
+  if (!timeIso) {
+    if (fallbackTime === "N/A") {
+      return fallbackTime;
+    }
+
+    const [hourString, minuteString] = fallbackTime.split(":");
+    const hour = Number(hourString);
+    const minute = Number(minuteString);
+
+    if (Number.isNaN(hour) || Number.isNaN(minute)) {
+      return fallbackTime;
+    }
+
+    return new Intl.DateTimeFormat(undefined, {
+      hour: "numeric",
+      minute: "2-digit",
+    }).format(new Date(2000, 0, 1, hour, minute));
+  }
+
+  return new Date(timeIso).toLocaleTimeString(undefined, {
+    hour: "numeric",
+    minute: "2-digit",
   });
 }

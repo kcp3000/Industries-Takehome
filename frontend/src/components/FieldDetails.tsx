@@ -1,6 +1,7 @@
-import { formatDayLabel } from "../lib/date";
+import { formatDayLabel, formatSlotTime } from "../lib/date";
 import { getDaySummary } from "../lib/availability";
 import type { FieldAvailability } from "../types";
+import { StatusPill } from "./StatusPill";
 
 type FieldDetailsProps = {
   selectedField: FieldAvailability | null;
@@ -45,13 +46,13 @@ export function FieldDetails({ selectedField }: FieldDetailsProps) {
                         <div key={`${day.date}-${slot.start}-${slot.end}`} className="slot-item">
                           <div>
                             <span>
-                              {slot.start} - {slot.end}
+                              {formatSlotTime(slot.startAt, slot.start)} - {formatSlotTime(slot.endAt, slot.end)}
                             </span>
                             {slot.permitHolder ? (
                               <div>{slot.permitHolder}</div>
                             ) : null}
                           </div>
-                          <span className={`slot-tag slot-${slot.status}`}>{slot.label}</span>
+                          <StatusPill label={slot.label} status={slot.status} />
                         </div>
                       ))}
                     </div>
@@ -59,7 +60,7 @@ export function FieldDetails({ selectedField }: FieldDetailsProps) {
                     <div className="slot-list">
                       <div className="slot-item">
                         <span>No active bookings listed</span>
-                        <span className="slot-tag slot-available">Open</span>
+                        <StatusPill label="Open" status="available" />
                       </div>
                     </div>
                   )}
