@@ -1,5 +1,8 @@
 node_modules/
+frontend/node_modules/
 dist/
+frontend/dist/
+.vite/
 .DS_Store
 *.tsbuildinfo
 vite.config.js
@@ -7,3 +10,4 @@ vite.config.d.ts
 .env
 .env.local
 .env.*.local
+backend/.env
