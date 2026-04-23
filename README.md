@@ -20,16 +20,16 @@ The current build is intentionally optimized for product judgment and clarity:
 
 ## Current status
 
-This build now uses a local dataset snapshot derived from the NYC Open Data Athletic Facilities dataset as its facility catalog source, then layers simulated availability on top so the interface can be exercised at realistic scale.
+This build now uses the live NYC Open Data Athletic Facilities API as its facility catalog source through a small Express backend, then layers simulated availability on top so the interface can be exercised at realistic scale without exposing the app token in the browser.
 
 What is real now:
 
 - React + TypeScript application structure
-- Real NYC athletic-facility inventory loaded from a local dataset snapshot
+- Real NYC athletic-facility inventory loaded from the live Socrata API
 - Search controls and date-range handling
 - Unified calendar UX
 - Field detail panel
-- Data-provider abstraction
+- Frontend/backend separation with an Express proxy
 - README notes on tradeoffs and next steps
 
 What is stubbed for the next step:
@@ -40,24 +40,23 @@ What is stubbed for the next step:
 
 That gap is intentional and called out because the prompt explicitly asks for honesty about anything mocked or skipped.
 
-## Dataset used
+## Data source
 
-The facility inventory is sourced from the NYC Open Data Athletic Facilities dataset:
+The facility inventory is sourced from the NYC Open Data Athletic Facilities API:
 
 - Landing page: https://data.cityofnewyork.us/dataset/Athletic-Facilities/qpgi-ckmp
 - API docs: https://dev.socrata.com/foundry/data.cityofnewyork.us/qnem-b8re
 - Current dataset/API id: `qnem-b8re`
-- CSV snapshot kept in this repo: `data/athletic-facilities.csv`
-- Runtime dataset used by the app: `public/athleticFacilities.json`
+- API endpoint: `https://data.cityofnewyork.us/api/v3/views/qnem-b8re/query.json`
 
-The app now reads the generated JSON dataset locally at runtime rather than calling the public API directly.
+The frontend does not call Socrata directly. It requests `/api/facilities` from the local Express backend, and the backend sends the Socrata request with the app token in the `X-App-Token` header.
 
-The version I pulled during development represented roughly:
+The current backend normalization returns roughly:
 
-- 6,933 total athletic-facility rows in the raw dataset
-- 2,965 active rows mapped into the five sports currently supported by the UI
+- 6,933 total athletic-facility rows from the raw API
+- 3,535 rows normalized into the five sports currently supported by the UI
 
-This makes the interface much better for realistic scope and performance testing than a tiny hand-written list.
+This gives the interface a realistic facility footprint without shipping a large local snapshot in the repo.
 
 ## Local setup
 
@@ -67,31 +66,38 @@ If your shell already has Node on PATH:
 
 ```bash
 npm install
+npm run dev:api
 npm run dev
 ```
 
-If not, use the full path:
+If not, use the repo helper or the full path:
 
 ```powershell
-& 'C:\Program Files\nodejs\npm.cmd' install
-& 'C:\Program Files\nodejs\npm.cmd' run dev
+.\scripts\npm.cmd install
+.\scripts\npm.cmd run dev:api
+.\scripts\npm.cmd run dev
 ```
+
+Create `backend/.env` from `backend/.env.example` and provide the Socrata app token before starting the backend.
 
 ## Architecture
 
-The app is deliberately split into three layers:
+The app is deliberately split into clear frontend/backend layers:
 
-1. `src/App.tsx`
+1. `frontend/src/App.tsx`
    The product shell, search controls, summary cards, calendar matrix, and detail panel.
 
-2. `src/data/providers.ts`
-   The source boundary. Today it routes to sample data. Tomorrow it can route to a live NYC Parks adapter or a small proxy service.
+2. `frontend/src/data/providers.ts`
+   The source boundary. Today it routes to the API-backed availability adapter.
 
-3. `src/data/sampleData.ts`
-   A real-inventory adapter that reads the NYC athletic-facilities seed data and generates deterministic availability across the requested date range.
+3. `frontend/src/data/availabilityData.ts`
+   The frontend availability adapter. It requests normalized facility inventory from the backend and generates deterministic slot availability across the requested date range.
 
-4. `public/athleticFacilities.json`
-   Trimmed facility inventory derived from the raw NYC CSV and loaded at runtime so the app has a stable dataset source.
+4. `backend/index.js`
+   A thin bootstrap file that loads environment variables and starts the server.
+
+5. `backend/src/`
+   The backend application layer, split into routes, services, config, constants, and shared utilities to keep the server code DRY and easier to extend.
 
 ## How I would wire the live NYC Parks source next
 
@@ -103,15 +109,15 @@ The public NYC Parks map already exposes field availability on the public web, b
    - permit blocks
    - open / booked / closed slot summaries
 3. Cache normalized responses by park + day range.
-4. Keep the React board exactly as-is and swap the dataset-backed provider for the live provider.
+4. Keep the React board exactly as-is and swap the simulated slot layer for a real permit-availability source.
 
 If I were shipping this for a real client, I would prefer a thin server-side proxy with caching rather than direct browser scraping. That would make rate-limiting, retries, source changes, and observability much safer.
 
-## Dataset access
+## API access
 
-The app currently reads a local generated dataset instead of calling the Socrata API on every load.
+The app now reads live facility inventory through the local backend instead of shipping a generated dataset in the repo.
 
-That keeps the demo more stable, avoids browser-side rate-limit surprises, and makes the repo easier to review because the facility inventory is deterministic during development.
+That keeps the token out of the browser, makes the frontend easier to review, and leaves a clear place to add caching or rate-limit protection if usage grows.
 
 ## Tradeoffs
 

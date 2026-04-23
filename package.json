@@ -1,22 +1,12 @@
 {
   "name": "industries-takehome",
-  "version": "0.1.0",
   "private": true,
-  "type": "module",
+  "workspaces": ["frontend", "backend"],
   "scripts": {
-    "dev": "vite",
-    "build": "tsc --noEmit -p tsconfig.app.json && tsc --noEmit -p tsconfig.node.json && vite build",
-    "preview": "vite preview"
-  },
-  "dependencies": {
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1"
-  },
-  "devDependencies": {
-    "@types/react": "^18.3.12",
-    "@types/react-dom": "^18.3.1",
-    "@vitejs/plugin-react": "^4.3.3",
-    "typescript": "^5.6.3",
-    "vite": "^5.4.10"
+    "dev": ".\\scripts\\npm.cmd --workspace frontend run dev",
+    "dev:frontend": ".\\scripts\\npm.cmd --workspace frontend run dev",
+    "dev:api": ".\\scripts\\npm.cmd --workspace backend run dev",
+    "build": ".\\scripts\\npm.cmd --workspace frontend run build",
+    "preview": ".\\scripts\\npm.cmd --workspace frontend run preview"
   }
 }
