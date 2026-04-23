@@ -86,6 +86,7 @@ function groupDailySlots(rawSlots, closeTime) {
       previous.end === slot.start
     ) {
       previous.end = slot.end;
+      previous.endAt = slot.endAt;
       continue;
     }
 
@@ -156,6 +157,8 @@ function normalizeDailyAvailability(startDate, endDate, responses) {
       slotsByDate.get(dateIso)?.push({
         start: formatTimeInNewYork(start),
         end: formatTimeInNewYork(end),
+        startAt: start.toISOString(),
+        endAt: end.toISOString(),
         status: mapped.status,
         label: mapped.label,
         permitHolder: mapped.permitHolder,
@@ -165,7 +168,7 @@ function normalizeDailyAvailability(startDate, endDate, responses) {
 
   return dateRange.map((date) => {
     const rawSlots = (slotsByDate.get(date) ?? []).sort((left, right) =>
-      left.start.localeCompare(right.start),
+      left.startAt.localeCompare(right.startAt),
     );
 
     return {
