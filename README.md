@@ -2,6 +2,8 @@
 
 React + TypeScript take-home for the M-Flat field-availability case study.
 
+Live app: `https://industries-takehome.onrender.com/`
+
 ## What the app does
 
 This tool is built around the core workflow from the brief:

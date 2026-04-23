@@ -25,7 +25,6 @@ export function FieldDetails({ selectedField }: FieldDetailsProps) {
               <li>{selectedField.field.locationHint}</li>
               <li>{selectedField.field.surface}</li>
               <li>{selectedField.field.lights ? "Lights available" : "Daylight only"}</li>
-              <li>Location ID: {selectedField.field.locationId}</li>
             </ul>
           </div>
 
