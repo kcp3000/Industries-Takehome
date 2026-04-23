@@ -5,6 +5,8 @@ import type {
   Field,
 } from "../types";
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? "https://field-availability-console.onrender.com";
+
 type FacilitySeed = {
   id: string;
   name: string;
@@ -38,7 +40,7 @@ export function getCachedAvailability(query: AvailabilityQuery) {
 
 export async function getFacilityCatalog() {
   if (!facilityCatalogPromise) {
-    facilityCatalogPromise = fetch("/api/facilities").then(async (response) => {
+    facilityCatalogPromise = fetch(`${API_BASE_URL}/api/facilities`).then(async (response) => {
       if (!response.ok) {
         throw new Error("Failed to load the NYC athletic facilities API.");
       }
@@ -73,7 +75,7 @@ export async function loadInventorySeedAvailability(
     borough: query.borough,
     fieldType: query.fieldType,
   });
-  const request = fetch(`/api/availability?${search.toString()}`).then(async (response) => {
+  const request = fetch(`${API_BASE_URL}/api/availability?${search.toString()}`).then(async (response) => {
     if (!response.ok) {
       throw new Error("Failed to load the NYC Parks availability API.");
     }
