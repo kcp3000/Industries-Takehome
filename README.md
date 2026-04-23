@@ -144,7 +144,6 @@ The app is intentionally designed around the case-study brief rather than the sh
 ## Known limitations
 
 - The app depends on live public endpoints, so upstream slowness or schema changes can affect results.
-- The README does not include a deployed URL because deployment is not configured in this repo.
 - The frontend build can be environment-sensitive in restricted shells because Vite uses `esbuild` during config loading.
 - There are no automated tests in the current repo.
 
